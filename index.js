@@ -40,6 +40,15 @@ async function run() {
             res.send(result);
         })
 
+        // get single product
+        app.get('/placeOrder/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await bikeCollection.findOne(query);
+            res.send(result);
+
+        })
+
         // Purchase products api 
         app.post('/purchase', async (req, res) => {
             const newOrder = req.body;
@@ -51,7 +60,17 @@ async function run() {
 
             const result = await purchaseCollection.find({ email : req.params.email}).toArray();
             res.send(result);
-        })
+        });
+
+         // DELETE FROM PURCHASE 
+    app.delete('/purchase/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = {_id:req.params.id};
+        const result = await purchaseCollection.deleteOne(query);
+        res.json(result);
+        
+      })
+    
 
 
     }
