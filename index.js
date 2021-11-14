@@ -22,6 +22,10 @@ async function run() {
         const database = client.db("bikeDB");
         const bikeCollection = database.collection("bikes");
         const purchaseCollection = database.collection("purchase");
+        const userCollection = database.collection("users");
+        const reviewCollection = database.collection("review");
+
+
         // Post products
         app.post('/addProducts', async (req, res) => {
             const newProduct = req.body;
@@ -69,6 +73,48 @@ async function run() {
         const result = await purchaseCollection.deleteOne(query);
         res.json(result);
         
+      })
+
+      // verify admin email 
+
+      app.get('/users/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = {email : email};
+        const user = await userCollection.findOne(query);
+        let isAdmin = false;
+        if(user?.role === 'admin'){
+          isAdmin = true;
+        }
+        res.json({admin:isAdmin});
+      })
+
+      // User post api 
+      app.post('/users', async (req, res)=> {
+        const user = req.body;
+        const result = await userCollection.insertOne(user);
+        res.json(result);
+        console.log(result);
+      })
+      // Make Admin
+      app.put('/users', async (req, res)=> {
+        const user = req.body;
+        const filter = {email:user.email};
+        const updateAdmin = {$set:{role:'admin'}};
+        const result = await userCollection.updateOne( filter,updateAdmin);
+        res.json(result);
+      })
+
+
+        // Post Reviews
+        app.post('/addReviews', async (req, res) => {
+          const newProduct = req.body;
+          const result = await reviewCollection.insertOne(newProduct);
+          res.json(result);
+      });
+      // Get all Reviews
+      app.get('/reviews', async (req, res) => {
+          const result = await reviewCollection.find({}).toArray();
+          res.send(result);
       })
     
 
