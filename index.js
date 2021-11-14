@@ -40,7 +40,6 @@ async function run() {
 
         app.get('/services', async (req, res) => {
             const result = await bikeCollection.find({}).limit(6).toArray();
-            console.log(result);
             res.send(result);
         })
 
@@ -93,7 +92,6 @@ async function run() {
         const user = req.body;
         const result = await userCollection.insertOne(user);
         res.json(result);
-        console.log(result);
       })
       // Make Admin
       app.put('/users', async (req, res)=> {
